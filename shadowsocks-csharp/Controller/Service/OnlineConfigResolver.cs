@@ -11,7 +11,7 @@ namespace Shadowsocks.Controller.Service
 {
     public class OnlineConfigResolver
     {
-        public static async Task<List<Server>> GetOnline(string url, IWebProxy proxy = null)
+        public static async Task<List<Server>> GetOnline(string url, string userAgentString, IWebProxy proxy = null)
         {
             var httpClientHandler = new HttpClientHandler()
             {
@@ -21,6 +21,8 @@ namespace Shadowsocks.Controller.Service
             {
                 Timeout = TimeSpan.FromSeconds(15)
             };
+            if (!string.IsNullOrWhiteSpace(userAgentString))
+                httpClient.DefaultRequestHeaders.Add("User-Agent", userAgentString);
 
             string server_json = await httpClient.GetStringAsync(url);
 
