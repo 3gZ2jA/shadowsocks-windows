@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,10 +11,13 @@ using System.Windows.Forms;
 using CommandLine;
 using Microsoft.Win32;
 using NLog;
+using ReactiveUI;
 using Shadowsocks.Controller;
 using Shadowsocks.Controller.Hotkeys;
 using Shadowsocks.Util;
 using Shadowsocks.View;
+using Splat;
+using WPFLocalizeExtension.Engine;
 
 namespace Shadowsocks
 {
@@ -108,6 +112,16 @@ namespace Shadowsocks
             Application.SetCompatibleTextRenderingDefault(false);
             AutoStartup.RegisterForRestart(true);
             #endregion
+
+            // We would use this in v5.
+            // Parameters would have to be dropped from views' constructors (VersionUpdatePromptView)
+            //Locator.CurrentMutable.RegisterViewsForViewModels(Assembly.GetCallingAssembly());
+
+            // Workaround for hosting WPF controls in a WinForms app.
+            // We have to manually set the culture for the LocalizeDictionary instance.
+            // https://stackoverflow.com/questions/374518/localizing-a-winforms-application-with-embedded-wpf-user-controls
+            // https://stackoverflow.com/questions/14668640/wpf-localize-extension-translate-window-at-run-time
+            LocalizeDictionary.Instance.Culture = Thread.CurrentThread.CurrentCulture;
 
 #if DEBUG
             // truncate privoxy log file while debugging
